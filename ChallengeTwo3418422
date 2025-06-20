@@ -1,0 +1,47 @@
+class SearchSuggestionSystem {
+    constructor(products) {
+        // Sort the product list lexicographically
+        this.products = products.sort();
+    }
+
+    getSuggestions(searchWord) {
+        const result = [];
+        let prefix = '';
+        let start = 0;
+
+        for (let i = 0; i < searchWord.length; i++) {
+            prefix += searchWord[i];
+
+            // Binary search to find the first product >= prefix
+            start = this.lowerBound(this.products, prefix, start);
+            const suggestions = [];
+
+            // Collect up to 3 suggestions that match the prefix
+            for (let j = start; j < Math.min(start + 3, this.products.length); j++) {
+                if (this.products[j].startsWith(prefix)) {
+                    suggestions.push(this.products[j]);
+                } else {
+                    break;
+                }
+            }
+
+            result.push(suggestions);
+        }
+
+        return result;
+    }
+
+    // Binary search for the first index where product >= prefix
+    lowerBound(arr, prefix, left) {
+        let right = arr.length;
+        while (left < right) {
+            const mid = Math.floor((left + right) / 2);
+            if (arr[mid] < prefix) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        return left;
+    }
+}
